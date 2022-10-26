@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %} Tentang Aplikasi {% endblock %}
+{% block body %}
+
+<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+    <div class="col-md-5 p-lg-5 mx-auto my-5">
+        <h1 class="display-6 fw-normal">Menggunakan Teknologi, Melestarikan Bahasa Sunda</h1>
+        <p class="lead fw-normal">Dengan memberi rekomendasi kata yang tepat, uubs app membuat kalimat anda sesuai
+            dengan tingkatan Undak Usuk Basa Sunda.
+        </p>
+        <a class="btn btn-outline-secondary" href="/">Mulai Sekarang</a>
+    </div>
+    <div class="product-device shadow-sm d-none d-md-block"></div>
+    <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
+</div>
+
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+    <div class="col-md-7 mx-auto my-5">
+        <h1 class="display-6 fw-normal">Apa itu uubs app?</h1>
+        <p class="fs-5 text-muted">uubs app merupakan klasifikasi Undak Usuk Basa Sunda yang menggunakan teknologi
+            Machine Learning. Anda dapat mengetahui klasifikasi kata sesuai tingkatan bahasanya.
+        </p>
+    </div>
+</div>
+
+<div class="container px-4 py-5" id="hanging-icons">
+    <h2 class="display-6 fw-normal pb-2 text-center">Bagaimana Cara Menggunakannya?</h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="col d-flex align-items-start">
+            <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+                <div class="numberCircle">01</div>
+            </div>
+            <div>
+                <h3>Pilih Tingkatan</h3>
+                <p class="text-muted">Pilih tingkatan bahasa Sunda yang ingin dikoreksi.</p>
+            </div>
+        </div>
+        <div class="col d-flex align-items-start">
+            <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+                <div class="numberCircle">02</div>
+            </div>
+            <div>
+                <h3>Masukan Kata</h3>
+                <p class="text-muted">Masukkan kata yang ingin dikoreksi kedalam kotak form yang tersedia</p>
+            </div>
+        </div>
+        <div class="col d-flex align-items-start">
+            <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+                <div class="numberCircle">03</div>
+            </div>
+            <div>
+                <h3>Tampil Hasil Koreksi</h3>
+                <p class="text-muted">Hasil koreksi akan muncul pada tampilan rekomendasi aplikasi.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    $('#about').addClass('active');
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+.cnt {
+    display: block;
+    margin: 0 auto;
+    transform: translateZ(0);
+    -webkit-text-size-adjust: none;
+}
+
+.backdrop {
+    position: absolute;
+    z-index: 1;
+    /* border: 2px solid #685972;
+    background-color: #fff; */
+    overflow: auto;
+    pointer-events: none;
+    transition: transform 1s;
+}
+
+.highlights {
+    padding-left: 13px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: transparent;
+    opacity: 0.6;
+}
+
+.nolights {
+    padding-left: 13px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: transparent;
+    opacity: 0.6;
+}
+
+.myhighlight {
+    border-radius: 3px;
+    /* background-color: transparent; */
+    background-color: #ddd;
+    color: transparent;
+    line-height: 2.2;
+    /* display: inline-block; */
+    border-bottom: 3px red solid;
+
+}
+
+.nohighlight{
+    border-radius: 3px;
+    background-color: transparent;
+    line-height: 2.2;
+    /* display: inline-block; */
+    /* border-bottom: 3px red solid; */
+}
+

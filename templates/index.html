@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% block title %} Dashboard - Klasifikasi {% endblock %}
+{% block body %}
+<div class="row">
+  <div class="col-sm-6">
+    <h2>Klasifikasi Teks</h2>
+    <hr>
+    <form id="form" method="post">
+      <div class="d-flex gap-2 mb-4 mt-4">
+        <div class="dropdown">
+          <select class="form-select btn-secondary" id="tingkat" name="tingkat">
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li class="dropdown-item">
+                <option value="">Pilih Tingkatan</option>
+              </li>
+              <li class="dropdown-item">
+                <option value="0">Loma</option>
+              </li>
+              <li class="dropdown-item">
+                <option value="1">Lemes Ka Sorangan</option>
+              </li>
+              <li class="dropdown-item">
+                <option value="2">Lemes Ka Batur</option>
+              </li>
+            </ul>
+          </select>
+
+        </div>
+      </div>
+      <div class="border p-4">
+        <label for="comment">Teks:</label>
+        <div class="cnt">
+          <div class="backdrop">
+            <div class="highlights"></div>
+          </div>
+          <textarea class="form-control" rows="10" id="comment" name="text"></textarea>
+        </div>
+        <button class="btn btn-primary mt-4" type="button" onclick="copy()">Copy</button>
+        <a href="/"><button class="btn btn-danger mt-4" type="button">Reset</button></a>
+      </div>
+    </form>
+  </div>
+  <div class="col-sm-6">
+    <h2>Rekomendasi</h2>
+    <hr>
+    <div id="recommend">
+      <!-- <div class="card">
+        <div class="card-body">
+          <h6 class="card-title"><i class="bi bi-exclamation-circle"></i> Menggantikan</h6>
+          <p class="card-text"><del>tuang</del>
+            <i class="bi bi-arrow-right"> </i>
+            <span class="badge bg-secondary">neda</span>
+          </p>
+          <button class="btn btn-sm float-end"><i class="bi bi-trash3"></i></button>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+  $('#home').addClass('active');
+  var txt = document.querySelector('#comment')
+  var select = document.getElementById('tingkat')
+  var lb = [];
+  var lbv = [];
+  var $highlights = $('.highlights');
+  var $textarea = $('textarea');
+
+  //handle input text not correct
+  function handleInput(light, text, list) {
+    var highlightedText = applyHighlights(text, list);
+    light.html(highlightedText);
+  }
+
+  //handle input text correct
+  function handleCorrect(nolight, key, value, text) {
+    var nohighlightedText = applyNoHighlights(key, value, text);
+    nolight.html(nohighlightedText);
+  }
+
+  //hightlight
+  function applyHighlights(text, list) {
+    for (let i = 0; i < list.length; i++) {
+      ids = list[i].split(' ').join('_');
+      let re = new RegExp(`\\b${list[i]}\\b`, 'gi');
+      text = text.replace(re, '<span class="myhighlight ' + ids + '">$&</span>');
+    }
+    return text;
+  }
+
+  //no highlight
+  function applyNoHighlights(key, value, text) {
+    for (let i = 0; i < key.length; i++) {
+      text = text.replace(/\n$/g, '\n\n').replace(key[i], '<span class="' + value[i] + '">' + value[i] + '</span>');
+
+    }
+    return text;
+  }
+
+  //timer ketik keyboard
+  function debounce(fn, duration) {
+    var timer;
+    return function () {
+      clearTimeout(timer);
+      timer = setTimeout(fn, duration);
+    }
+  }
+
+  //rename id ngram
+  function renameId(keys) {
+    var data_id = keys.split(" ").length;
+    var id_val = keys;
+    if (data_id > 1) {
+      id_val = id_val.split(' ').join('_');
+      return id_val;
+    } else {
+      id_val = keys;
+      return id_val;
+    }
+
+  }
+
+  //pars text correct
+  function addCorrect(k, v, tx) {
+    var idst_v = renameId(k);
+    removeCard(k)
+    $(`.${idst_v}`).remove();
+
+    lb.push(k);
+    lbv.push(v);
+
+    for (let i = 0; i < lb.length; i++) {
+      let res = new RegExp(`\\b${lb[i]}\\b`, 'gi');
+      tx = tx.replace(res, lbv[i]);
+
+    }
+
+    $textarea.val(tx);
+    // return txs;
+  }
+
+  //copy text
+  function copy() {
+    txt.select();
+    document.execCommand("copy");
+  }
+
+  //remove card koreksi
+  function removeCard(ids) {
+    if (ids) {
+      let ids_val = renameId(ids);
+      $(`#correct_${ids_val}`).remove();
+    }
+  }
+
+  //program utama
+  const onReady = () => {
+
+    txt.addEventListener('keydown', () => {
+      console.log('lum selese')
+    })
+
+    txt.addEventListener('keyup', debounce(() => {
+      var input = select.options[select.selectedIndex].value;
+      var text = txt.value; //isi textarea
+      var html = "";
+      if (input == '' || input > 2) {
+        alert('Tingkatan Belum Dipilih!')
+        location.reload();
+      } else {
+        // console.log(input);
+        // console.log(txt.value);
+        $.ajax({
+          url: '/prosescek',
+          data: { input, text },
+          type: 'POST',
+          dataType: 'json',
+          success: function (data) {
+            // console.log(data);
+
+            //sukses post data ajax
+            var list_not_correct = [];
+            var list_correct = [];
+            var list_key = [];
+            var text = $textarea.val();
+            var light = $highlights;
+            // console.log('ini val text : ' + text);
+
+            for (const [key, value] of Object.entries(data)) {
+              // console.log(`ini ${key}: ${value}`);
+              if (value == '' || value == key) {
+                if (value == '') {
+                  console.log(`kosong ${key}: ${value}`);
+                } else {
+                  console.log(`Betul ${key}: ${value}`);
+                  list_correct.push(value);
+                  list_key.push(key);
+                  // console.log(list_key)
+                }
+
+              } else {
+                let idx = renameId(key);
+                html += '<div id="correct_' + idx + '" class="card pt-1 pb-1">' +
+                  '<div class="card-body">' +
+                  '<h6 class="card-title"><i class="bi bi-exclamation-circle"></i> Menggantikan</h6>' +
+                  '<a onclick="addCorrect(\'' + key + '\',\'' + value + '\',\'' + text + '\')">' +
+                  '<p class="card-text"><del>' + key + ' ' + '</del>' +
+                  '<i class="bi bi-arrow-right"> </i>' +
+                  '<span class="badge bg-secondary">' + value + '</span>' +
+                  '</p>' +
+                  '</a>' +
+                  '<a onclick="removeCard(\'' + key + '\')" class="btn btn-sm float-end"><i class="bi bi-trash3"></i></a>' +
+                  '</div>' +
+                  '</div>';
+                $('#recommend').html(html);
+                console.log(`Tidak sama ${key}: ${value}`);
+                list_not_correct.push(key);
+              }
+            }
+
+            handleInput(light, text, list_not_correct);
+            console.log(list_not_correct)
+
+          },
+          error: function (error) {
+            console.log(error);
+          }
+        });
+      }
+
+
+    }, 1000))
+
+  }
+
+  document.addEventListener('DOMContentLoaded', onReady)
+</script>
+{% endblock %}
